@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive English Speaking Slides</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .slide {
+      display: none;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+    }
+    .slide.active {
+      display: block;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Questions in English (Part 1) Quiz</h1>
+  <div id="slides"></div>
+  <div class="controls">
+    <button onclick="prevSlide()">Previous</button>
+    <button onclick="nextSlide()">Next</button>
+  </div>
+
+  <script>
+    const slidesData = [
+      // DO / DOES / DID / TO BE (1-10)
+      { q: "___ you like pizza?", a: "Do", full: "Do you like pizza?" },
+      { q: "___ she work here?", a: "Does", full: "Does she work here?" },
+      { q: "___ they play tennis?", a: "Do", full: "Do they play tennis?" },
+      { q: "___ he go to school yesterday?", a: "Did", full: "Did he go to school yesterday?" },
+      { q: "___ we have class on Friday?", a: "Do", full: "Do we have class on Friday?" },
+      { q: "___ it rain yesterday?", a: "Did", full: "Did it rain yesterday?" },
+      { q: "___ she your teacher?", a: "Is", full: "Is she your teacher?" },
+      { q: "___ they from Canada?", a: "Are", full: "Are they from Canada?" },
+      { q: "___ he at the party?", a: "Was", full: "Was he at the party?" },
+      { q: "___ you tired after work?", a: "Were", full: "Were you tired after work?" },
+
+      // QUESTION WORDS + AUXILIARIES (11-20)
+      { q: "___ ___ he do yesterday?", a: "What did", full: "What did he do yesterday?" },
+      { q: "___ ___ they play?", a: "What do", full: "What do they play?" },
+      { q: "___ ___ you go last weekend?", a: "Where did", full: "Where did you go last weekend?" },
+      { q: "___ ___ she like to eat?", a: "What does", full: "What does she like to eat?" },
+      { q: "___ ___ you talk to?", a: "Who did", full: "Who did you talk to?" },
+      { q: "___ ___ he live?", a: "Where does", full: "Where does he live?" },
+      { q: "___ ___ it happen?", a: "When did", full: "When did it happen?" },
+      { q: "___ ___ they come from?", a: "Where do", full: "Where do they come from?" },
+      { q: "___ ___ she call you?", a: "When did", full: "When did she call you?" },
+      { q: "___ ___ you feel today?", a: "How do", full: "How do you feel today?" }
+    ];
+
+    const slidesContainer = document.getElementById("slides");
+    let currentSlide = 0;
+
+    slidesData.forEach((slide, index) => {
+      const div = document.createElement("div");
+      div.className = "slide";
+      if (index === 0) div.classList.add("active");
+
+      div.innerHTML = `
+        <h2>Slide ${index + 1} / ${slidesData.length}</h2>
+        <p><strong>${slide.q}</strong></p>
+        <button onclick="playAudio(${index})">🔊 Listen</button><br>
+        <input type="text" id="input${index}" placeholder="Type your answer here..." />
+        <br>
+        <button onclick="checkAnswer(${index})">Check Answer</button>
+        <p class="feedback" id="feedback${index}"></p>
+      `;
+      slidesContainer.appendChild(div);
+    });
+
+    function playAudio(index) {
+      const msg = new SpeechSynthesisUtterance(slidesData[index].full);
+      window.speechSynthesis.speak(msg);
+    }
+
+    function checkAnswer(index) {
+      const userInput = document.getElementById(`input${index}`).value.trim().toLowerCase();
+      const correctAnswer = slidesData[index].a.toLowerCase();
+      const feedback = document.getElementById(`feedback${index}`);
+
+      if (userInput === correctAnswer) {
+        feedback.textContent = "✅ Correct!";
+        feedback.style.color = "green";
+      } else {
+        feedback.textContent = `❌ Try again. Hint: It starts with '${correctAnswer.split(" ")[0]}'`;
+        feedback.style.color = "red";
+      }
+    }
+
+    function showSlide(index) {
+      const allSlides = document.querySelectorAll(".slide");
+      allSlides.forEach(slide => slide.classList.remove("active"));
+      allSlides[index].classList.add("active");
+    }
+
+    function nextSlide() {
+      if (currentSlide < slidesData.length - 1) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+  </script>
+</body>
+</html>
